@@ -1,6 +1,6 @@
-How to solve the two sum problem with Java
+# How To Solve The Two Sum Problem with Java
 
-The first step is know the problem, if visit the page Leetcode in its problems section we'll find the announce of the problem wich gives of the follow description:
+The first step is to understand the problem. If you visit the LeetCode problem section, you will find the statement of the problem, which gives the following description:
 
 Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
 
