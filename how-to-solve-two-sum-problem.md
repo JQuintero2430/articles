@@ -32,50 +32,46 @@ Output: `[0,1]`
 
 ---
 
-If we want to find our addends for a specific number, our first reasoning must be releated about how to travers our elements list, in a first instance the answer is simple, we must to do a for loop for every posible result, later we evaluate if we have the target into our results list, but this will generate an algorithm who have two nested loops, which means that every number must evaluate himself with every other number into the list, giving as result an algoritmic complexity of O(n.n). Therefore we have to abord the problem using another approach
+## Step 1: Initial Approach
 
-Given that we want to travers the list only once to know the value for every position the best option is store this values into a key value structure, in our example the best option is a HashMap which store two integers.
+If we want to find the addends for a specific number, our first reasoning must be related to how we traverse the list of elements. At first, the answer seems simple: we can use a nested loop to check all possible pairs. However, this generates an algorithm with two nested loops, meaning each number is compared with every other number in the list, leading to a time complexity of O(n²). Therefore, we need a different approach.
 
+---
+
+## Step 2: Using a HashMap
+
+Since we want to traverse the list only once while keeping track of values, the best option is to store these values in a key-value structure. In this case, a `HashMap` works perfectly, storing numbers as keys and their indices as values.
+
+```java
 class Solution {
-
     public static int[] twoSum(int[] nums, int target) {
         Map<Integer, Integer> numToIndex = new HashMap<>();
     }
 }
+```
 
-Now then, after clarify this, we should solve the problem related with get the missing addend to obtain our target, for this we'll use a simple mathematic reasoning. 
-I have the first addend which is the number into my list, and I have the result whish is my target, from this point I just need to clear a simple equation that looks like this
+## Step 3: Finding the Missing Addend
+
+Now, we need to determine how to find the missing addend that complements our current number to reach the target. The reasoning is simple:
 
 listNumber + X = target
 
-Where listNumber and target are known parameter, so I move listNumber to the other side of equation and chenge his sign, giving us as result the follow equation
+
+Rearranging the equation:
 
 X = target - listNumber
 
-Solved the topic of ¿how to find the second addend? we start the travers over our list using a unique for loop. Now we have to evaluate every single element and we have to question our self ¿when I use my formula for this number which is into my list, the result is into my hashMap as a key? if the answer is no I have to add the value and the index of my list in my HashMap, but if already exist that means we find the missing addend for our target, so we have to retrive the current index and the value of the key that make match in our first question.
-This results in an algorithm with an algoritmic complexity of O(n).
+## Step 4: Implementing the Algorithm
+
+We traverse the list with a single loop. For each number, we calculate its complement and check if it already exists in the HashMap.
+
+If it does, we have found the two indices.
+
+If it doesn’t, we store the current number and its index in the HashMap.
+
+This results in an algorithm with O(n) time complexity.
 
 class Solution {
-
-    public static int[] twoSum(int[] nums, int target) {
-        Map<Integer, Integer> numToIndex = new HashMap<>();
-
-        for (int i = 0; i < nums.length; i++) {
-            int complement = target - nums[i];
-
-            if (numToIndex.containsKey(complement)) {
-                return new int[]{numToIndex.get(complement), i};
-            }
-
-            numToIndex.put(nums[i], i);
-        }
-    }
-}
-
-In our last step we take in consideration the posiblility that we don't have any combination of addends which generate our target, in this case we can add an exception or a message expressing this idea
-
-class Solution {
-
     public static int[] twoSum(int[] nums, int target) {
         Map<Integer, Integer> numToIndex = new HashMap<>();
 
@@ -92,9 +88,12 @@ class Solution {
     }
 }
 
-Resume of the algorithm:
+Summary of the Algorithm
 
- - 1. Create a hash map to store the numbers and their indices.
- - 2. Iterate through the array, for each number calculate its complement.
- - 3. If the complement exists in the map, return the pair of indices.
- - 4. If no pair is found, throw an exception.
+1. Create a HashMap to store the numbers and their indices.
+
+2. Iterate through the array and calculate the complement for each number.
+
+3. If the complement exists in the map, return the pair of indices.
+
+4. If no pair is found, throw an exception.
