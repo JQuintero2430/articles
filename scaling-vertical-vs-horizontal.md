@@ -5,7 +5,7 @@ tags: [architecture, distributed systems, scalability, devops, cloud]
 
 # Vertical vs Horizontal Scaling: A Technical Guide for Architects and Senior Engineers
 
-> *“Should I buy a bigger machine or more of them?”*
+> “Should I buy a bigger machine or more of them?”
 
 This seemingly simple question defines the inflection point in the growth of any distributed system. **Vertical scaling** (adding more resources to a single machine) is tempting for its simplicity but has physical limits. **Horizontal scaling** (adding more machines) offers elasticity and resilience, but introduces architectural complexity. This article breaks down both approaches with technical rigor and an engineering mindset.
 
