@@ -44,7 +44,7 @@ Means **adding more replicas** of an application or service, usually behind a **
 
 ### Vertical Scaling
 
-Reaches its limit when **physical bottlenecks** emerge: memory bandwidth, NUMA latency, cache coherence, or I/O saturation. Scaling is finite—even the largest instances hit diminishing returns.
+Reaches its limit when **physical bottlenecks** emerge: memory bandwidth, NUMA latency, cache coherence, or I/O saturation. Scaling is finite, even the largest instances hit diminishing returns.
 
 ### Horizontal Scaling
 
@@ -153,4 +153,4 @@ In fan-out systems, total latency follows the slowest replica (*The Tail at Scal
 * **Horizontal scaling** is complex but enables resilience, HA, and long-term growth.
 * A good architect designs to **start vertical** but **be ready for horizontal**.
 
-Ultimately, the decision isn’t *one or the other*, but **when and how to combine both**. Modern systems succeed by recognizing that scaling isn’t just adding resources—it’s **mastering the interaction between physics, software, and distributed architecture**.
+Ultimately, the decision isn’t *one or the other*, but **when and how to combine both**. Modern systems succeed by recognizing that scaling isn’t just adding resources, it’s **mastering the interaction between physics, software, and distributed architecture**.
