@@ -231,3 +231,237 @@ function addTwoNumbers(l1, l2):
 
 El algoritmo es lineal, in-situ en términos de memoria adicional, y elegante gracias al uso de un **nodo centinela** y un **acarreo** explícito. Maneja correctamente longitudes desiguales y acarreo final, cumpliendo las restricciones del problema.
 
+---
+
+# Sum of Two Numbers Represented as Linked Lists (Reverse Order)
+
+## Executive Summary
+
+Given two non-empty linked lists `l1` and `l2` representing non-negative numbers, where **each node contains a single digit** and the digits are stored in **reverse order** (the head is the least significant digit), we must **add** the two numbers and **return the result** as a new linked list, also in reverse order.
+
+---
+
+## Data Model
+
+Each linked list node has the following structure:
+
+```java
+class ListNode {
+    int val;        // digit in [0..9]
+    ListNode next;  // reference to the next node
+}
+```
+
+The lists **do not** contain leading zeros (except for the number 0 itself), and their length is in `[1, 100]`.
+
+---
+
+## Key Idea (Invariant)
+
+We traverse both lists **simultaneously**, maintaining a **carry** between 0 and 1 (or more generally, 0..9 if more lists were involved).
+In each iteration, the partial sum is:
+
+```
+sum = (value from l1 if exists, else 0) + (value from l2 if exists, else 0) + carry
+```
+
+The new result digit is `sum % 10`, and the new `carry` is `sum / 10` (integer division).
+We create a node with that digit and link it to the end of the result. The process continues until **both** lists are exhausted **and** `carry == 0`.
+
+**Invariant:** After processing k nodes (k ≥ 0), the result list contains exactly the **k least significant digits** of the sum of the prefixes of `l1` and `l2`, and `carry` represents the pending carry-over to the next digit.
+
+---
+
+## Step-by-Step Algorithm
+
+1. **Initialization**
+
+   * Create a **dummy head** node `dummyHead` with value 0 to simplify pointer handling.
+   * Define a pointer `current = dummyHead` that points to the last node in the result.
+   * Define `carry = 0`.
+   * Define read pointers `p = l1` and `q = l2`.
+
+2. **Main Loop**
+
+   * While `p != null` **or** `q != null` **or** `carry != 0`:
+
+     1. Read `x = (p != null) ? p.val : 0`.
+     2. Read `y = (q != null) ? q.val : 0`.
+     3. Compute `sum = x + y + carry`.
+     4. Update `carry = sum / 10` (integer division).
+     5. Determine `digit = sum % 10`.
+     6. Create a new node `node = new ListNode(digit)`.
+     7. Link: `current.next = node` and move `current = node`.
+     8. Advance `p = p.next` if `p != null`; advance `q = q.next` if `q != null`.
+
+3. **Termination**
+
+   * Return `dummyHead.next` (skip the dummy head).
+
+---
+
+## Diagram (Iteration Flow)
+
+```
+p.val ─┐
+       ├──► sum = x + y + carry ──► digit = sum % 10 ──► [append digit]
+q.val ─┘                            carry = sum / 10 ──► (next iteration)
+```
+
+---
+
+## Detailed Example
+
+### Input
+
+* `l1 = [2,4,3]`  ⇒ number 342
+* `l2 = [5,6,4]`  ⇒ number 465
+
+### Iterations
+
+1. `x=2, y=5, carry=0` → `sum=7` → `digit=7`, `carry=0` → result: `[7]`
+2. `x=4, y=6, carry=0` → `sum=10` → `digit=0`, `carry=1` → result: `[7,0]`
+3. `x=3, y=4, carry=1` → `sum=8` → `digit=8`, `carry=0` → result: `[7,0,8]`
+4. Lists exhausted and `carry=0` → end.
+
+### Output
+
+`[7,0,8]` (which represents 807).
+
+---
+
+## Complexity
+
+* **Time:** `O(max(m, n))`, where `m = len(l1)` and `n = len(l2)`. Each node is visited at most once.
+* **Additional space:** `O(1)` (excluding the result list), since only a few variables are used and exactly one node per result digit is created.
+
+---
+
+## Informal Proof of Correctness
+
+* **Totality:** The loop continues while there are digits to process or a pending carry.
+* **Invariant preservation:** At each step, we append the least significant digit of the partial sum to the result and propagate the remainder as `carry`.
+* **Termination:** Since the lists are finite and `carry` decreases to at most 1 per iteration, eventually `p == q == null` and `carry == 0`, ending the loop.
+
+---
+
+## Idiomatic Java Implementation
+
+```java
+public class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode current = dummyHead;
+        int carry = 0;
+
+        while (l1 != null || l2 != null || carry != 0) {
+            int x = (l1 != null) ? l1.val : 0;
+            int y = (l2 != null) ? l2.val : 0;
+
+            int sum = x + y + carry;
+            carry = sum / 10;
+            int digit = sum % 10;
+
+            current.next = new ListNode(digit);
+            current = current.next;
+
+            if (l1 != null) l1 = l1.next;
+            if (l2 != null) l2 = l2.next;
+        }
+        return dummyHead.next;
+    }
+}
+```
+
+---
+
+## Edge Cases to Consider
+
+1. **Different lengths:** e.g., `l1=[9,9,9]`, `l2=[1]` → continue summing with `x=0` or `y=0` once one list ends.
+2. **Carry at the end:** e.g., `l1=[5]`, `l2=[5]` → result `[0,1]` (10).
+3. **One list is zero:** `l1=[0]`, `l2=[7,3]` → result `[7,3]`.
+4. **All digits are 9:** `l1=[9,9,9,9,9,9,9]`, `l2=[9,9,9,9]` → `[8,9,9,9,0,0,0,1]`.
+5. **Minimum input:** `l1=[0]`, `l2=[0]` → `[0]`.
+
+---
+
+## Suggested Test Cases (Table)
+
+| l1                | l2        | Expected Output   |
+| ----------------- | --------- | ----------------- |
+| [2,4,3]           | [5,6,4]   | [7,0,8]           |
+| [0]               | [0]       | [0]               |
+| [9,9,9,9,9,9,9]   | [9,9,9,9] | [8,9,9,9,0,0,0,1] |
+| [1,8]             | [0]       | [1,8]             |
+| [5]               | [5]       | [0,1]             |
+| [1,0,0,0,0,0,0,1] | [5,6,4]   | [6,6,4,0,0,0,0,1] |
+
+---
+
+## Common Mistakes (and How to Avoid Them)
+
+* **Forgetting the `carry`** at the end of the loop → use the condition `while (l1 != null || l2 != null || carry != 0)`.
+* **Incorrectly linking** the new node to the result → always use `current.next = new ListNode(digit); current = current.next;`.
+* **Using unnecessary auxiliary structures** (like `ArrayList`) → build the list on the fly using a dummy node.
+* **Mixing up digit order** → remember that the head node is the **unit** (reverse order).
+
+---
+
+## Variants and Extensions
+
+* **Lists in forward order (MSD first):** requires reversing the lists or using a stack/recursion to sum from the end.
+* **Sum of *k* lists:** iterate by accumulating `sum` with all available digits and a generalized `carry`.
+* **Arrays instead of lists:** same logic, but use indices instead of nodes.
+
+---
+
+## Output Space Complexity
+
+The result list size is **at most `max(m, n) + 1`** (due to a possible final carry). This space is **necessary** to represent the sum.
+
+---
+
+## Language-Neutral Pseudocode
+
+```
+function addTwoNumbers(l1, l2):
+    dummy ← new Node(0)
+    curr  ← dummy
+    carry ← 0
+    p ← l1
+    q ← l2
+    while p ≠ null or q ≠ null or carry ≠ 0:
+        x ← (p ≠ null) ? p.val : 0
+        y ← (q ≠ null) ? q.val : 0
+        s ← x + y + carry
+        carry ← s div 10
+        digit ← s mod 10
+        curr.next ← new Node(digit)
+        curr ← curr.next
+        if p ≠ null: p ← p.next
+        if q ≠ null: q ← q.next
+    return dummy.next
+```
+
+---
+
+## Style/Clean Code Considerations (Java)
+
+* Using a `dummyHead` avoids conditional logic for the first node.
+* Keep variable names short but clear (`x`, `y`, `sum`, `carry`).
+* Limit variable scope to the loop when possible.
+* Avoid boxing (`Integer`) and prefer primitives (`int`).
+
+---
+
+## Conclusion
+
+The algorithm is linear, in-place regarding additional memory, and elegant thanks to the use of a **dummy node** and an explicit **carry**. It correctly handles unequal lengths and final carry, satisfying the problem’s constraints.
